@@ -46,3 +46,9 @@ mv "$tmp" data_cleaned.csv
 tmp=$(mktemp)
 gawk '!seen[$0]++' data_cleaned.csv > "$tmp"
 mv "$tmp" data_cleaned.csv
+
+#Delete rows that do not contain a video_id
+tmp=$(mktemp)
+gawk -F',' '$1 != "" {print}' data_cleaned.csv > "$tmp"
+mv "$tmp" data_cleaned.csv
+
