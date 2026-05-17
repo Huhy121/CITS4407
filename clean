@@ -34,3 +34,5 @@ if [ "$cols" -ne 7 ]; then
     exit 1
 fi
 
+# Delete the column named ratings_disabled
+cut -d',' -f1-6 "$input" > data_cleaned.csv
