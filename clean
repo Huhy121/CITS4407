@@ -52,3 +52,8 @@ tmp=$(mktemp)
 gawk -F',' '$1 != "" {print}' data_cleaned.csv > "$tmp"
 mv "$tmp" data_cleaned.csv
 
+#Delete rows which contain zero number of likes or dislikes
+tmp=$(mktemp)
+gawk -F',' '$5 != "0" && $6 != "0" {print}' data_cleaned.csv > "$tmp"
+mv "$tmp" data_cleaned.csv  
+
