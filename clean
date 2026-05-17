@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Added error handling	
+# 1) No input file specified
+if [ $# -eq 0 ]; then
+    echo "ERROR: No input CSV file provided"
+    exit 1
+fi
+
+input="$1"
+
+# 2) Input file not found in the current directory
+if [ ! -f "$input" ]; then
+    echo "ERROR: Input file not found in the current directory"
+    exit 1
+fi
+
+# 3) Input file is not a CSV file
+if [[ "$input" != *.csv ]]; then
+    echo "ERROR: Input file expected in a CSV format"
+    exit 1
+fi
+
+# 4) Input file is empty
+if [ ! -s "$input" ]; then
+    echo "ERROR: Empty file provided"
+    exit 1
+fi
+
+# 5) Input CSV file has incorrect number of columns (expected 7)
+cols=$(head -1 "$input" | awk -F',' '{print NF}')
+if [ "$cols" -ne 7 ]; then
+    echo "ERROR: Expected 7 columns in the input"
+    exit 1
+fi
+
