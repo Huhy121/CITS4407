@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+input="$1"
+#Calculate and print the video_id of the video that has the most number of occurrences in the data.
+gawk -F',' '{count[$1]++} END {for (id in count) {print id, count[id]}}' "$input" | sort -k2 -nr | head -1 | gawk '{print "Most frequent video, ID: " $1}'
