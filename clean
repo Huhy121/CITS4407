@@ -57,3 +57,7 @@ tmp=$(mktemp)
 gawk -F',' '$5 != "0" && $6 != "0" {print}' data_cleaned.csv > "$tmp"
 mv "$tmp" data_cleaned.csv  
 
+# Remove the time data from the publish_date column
+tmp=$(mktemp)
+sed 's/T[^,]*//' data_cleaned.csv > "$tmp"
+mv "$tmp" data_cleaned.csv
