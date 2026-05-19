@@ -33,15 +33,10 @@ END {
 
 #Print the video_id and the publish_date of the video that contains the least net sentiment rate
 gawk -F',' 'NR>1 {
-    sentiment_rate = ($5 - $4) / $3
+    sentiment_rate = ($4 - $5) / $3
     if (NR==2 || sentiment_rate < min_sentiment) { min_sentiment=sentiment_rate; delete ids; delete dates; n=0 }
     if (sentiment_rate == min_sentiment) { ids[++n]=$1; dates[n]=$2 }
 }
 END {
     for (i=1; i<=n; i++) print "Least sentiment rate video " i ", ID: " ids[i] ", dated: " dates[i]
 }' "$input"
-
-
-    
-
-
