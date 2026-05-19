@@ -2,7 +2,12 @@
 input="$1"
 
 # Calculate and print the video_id of the video that has the most number of occurrences in the data.
-gawk -F',' '{count[$1]++} END {for (id in count) {print id, count[id]}}' "$input" | sort -k2 -nr | head -1 | gawk '{print "Most frequent video, ID: " $1}'
+gawk -F',' 'NR>1{
+    count[$1]++
+} 
+END {
+    for (id in count) {print id, count[id]}
+}' "$input" | sort -k2 -nr | head -1 | gawk '{print "Most frequent video, ID: " $1}'
 
 # Calculate and print the mean (2 places after the decimal) number of views
 gawk -F',' 'NR>1 {sum_views+=$3; count++} END {
@@ -31,6 +36,18 @@ END {
     print "Highest engagement rate video, ID: " id ", dated: " publish_date
 }' "$input"
 
+#Print the video_id and the publish_date of the video that contains the least net sentiment rate
+gawk -F',' 'NR>1 {
+    sentiment_rate = ($5 - $4) / $3
+    if (sentiment_rate < min_sentiment) {
+        min_sentiment = sentiment_rate
+        id = $1
+        publish_date = $2
+    }
+}
+END {
+    print "Least sentiment rate video, ID: " id ", dated: " publish_date
+}' "$input"
 
 
     
