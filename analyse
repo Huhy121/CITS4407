@@ -9,3 +9,7 @@ gawk -F',' 'NR>1 {sum_views+=$3; count++} END {
     if (count > 0) printf ("Mean number of views: %.2f\n", sum_views/count) 
     else print "No data to calculate mean."
     }' "$input"
+# Calculate and print the video_id of the video with the maximum number of dislikes
+gawk -F',' 'NR>1 {if ($5 > max) {max=$5; id=$1}} END {print "Max dislikes video, ID: " id}' "$input"
+
+
