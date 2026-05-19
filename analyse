@@ -2,12 +2,9 @@
 input="$1"
 
 # Calculate and print the video_id of the video that has the most number of occurrences in the data.
-gawk -F',' 'NR>1{
-    count[$1]++
-} 
-END {
-    for (id in count) {print id, count[id]}
-}' "$input" | sort -k2 -nr | head -1 | gawk '{print "Most frequent video, ID: " $1}'
+gawk -F',' 'NR>1 {count[$1]++} END {for (id in count) {print id, count[id]}}' "$input" \
+| sort -k2 -nr \
+| gawk 'NR==1 {max=$2} $2==max{print "Most frequent video, ID: " $1}'
 
 # Calculate and print the mean (2 places after the decimal) number of views
 gawk -F',' 'NR>1 {sum_views+=$3; count++} END {
@@ -17,36 +14,31 @@ gawk -F',' 'NR>1 {sum_views+=$3; count++} END {
 
 # Calculate and print the video_id of the video with the maximum number of dislikes
 gawk -F',' 'NR>1 {
-    if ($5 > max_dislike) {max_dislike=$5; id=$1}
-} 
+    if ($5 > max_dislike) { max_dislike=$5; delete ids; n=0 }
+    if ($5 == max_dislike) { ids[++n]=$1 }
+}
 END {
-    print "Max dislikes video, ID: " id
+    for (i=1; i<=n; i++) print "Max dislikes video " i ", ID: " ids[i]
 }' "$input"
 
 #Print the video_id and the publish_date of the video that contains the highest engagement rate (engagement rate = (likes + dislikes) / views)
 gawk -F',' 'NR>1 {
     engagement_rate = ($4 + $5) / $3
-    if (engagement_rate > max_engagement) {
-        max_engagement = engagement_rate
-        id = $1
-        publish_date = $2
-    }
+    if (engagement_rate > max_engagement) { max_engagement=engagement_rate; delete ids; delete dates; n=0 }
+    if (engagement_rate == max_engagement) { ids[++n]=$1; dates[n]=$2 }
 }
 END {
-    print "Highest engagement rate video, ID: " id ", dated: " publish_date
+    for (i=1; i<=n; i++) print "Highest engagement rate video " i ", ID: " ids[i] ", dated: " dates[i]
 }' "$input"
 
 #Print the video_id and the publish_date of the video that contains the least net sentiment rate
 gawk -F',' 'NR>1 {
     sentiment_rate = ($5 - $4) / $3
-    if (sentiment_rate < min_sentiment) {
-        min_sentiment = sentiment_rate
-        id = $1
-        publish_date = $2
-    }
+    if (NR==2 || sentiment_rate < min_sentiment) { min_sentiment=sentiment_rate; delete ids; delete dates; n=0 }
+    if (sentiment_rate == min_sentiment) { ids[++n]=$1; dates[n]=$2 }
 }
 END {
-    print "Least sentiment rate video, ID: " id ", dated: " publish_date
+    for (i=1; i<=n; i++) print "Least sentiment rate video " i ", ID: " ids[i] ", dated: " dates[i]
 }' "$input"
 
 
