@@ -35,29 +35,29 @@ if [ "$cols" -ne 7 ]; then
 fi
 
 # Delete the column named ratings_disabled
-cut -d',' -f1-6 "$input" > data_cleaned.csv
+cut -d',' -f1-6 "$input" > trending_videos_clean.csv
 
 # Delete those rows that contain any empty fields
 tmp=$(mktemp)
-gawk -F',' 'NF==6 && ($0 !~ /^,/ && $0 !~ /,,/ && $0 !~ /,$/) {print}' data_cleaned.csv > "$tmp"
-mv "$tmp" data_cleaned.csv
+gawk -F',' 'NF==6 && ($0 !~ /^,/ && $0 !~ /,,/ && $0 !~ /,$/) {print}' trending_videos_clean.csv > "$tmp"
+mv "$tmp" trending_videos_clean.csv
 
 # Delete any duplicate rows from your data
 tmp=$(mktemp)
-gawk '!seen[$0]++' data_cleaned.csv > "$tmp"
-mv "$tmp" data_cleaned.csv
+gawk '!seen[$0]++' trending_videos_clean.csv > "$tmp"
+mv "$tmp" trending_videos_clean.csv
 
 #Delete rows that do not contain a video_id
 tmp=$(mktemp)
-gawk -F',' '$1 != "" {print}' data_cleaned.csv > "$tmp"
-mv "$tmp" data_cleaned.csv
+gawk -F',' '$1 != "" {print}' trending_videos_clean.csv > "$tmp"
+mv "$tmp" trending_videos_clean.csv
 
 #Delete rows which contain zero number of likes or dislikes
 tmp=$(mktemp)
-gawk -F',' '$4 != "0" && $5 != "0" {print}' data_cleaned.csv > "$tmp"
-mv "$tmp" data_cleaned.csv  
+gawk -F',' '$4 != "0" && $5 != "0" {print}' trending_videos_clean.csv > "$tmp"
+mv "$tmp" trending_videos_clean.csv  
 
 # Remove the time data from the publish_date column
 tmp=$(mktemp)
-sed 's/T[^,]*//' data_cleaned.csv > "$tmp"
-mv "$tmp" data_cleaned.csv
+sed 's/T[^,]*//' trending_videos_clean.csv > "$tmp"
+mv "$tmp" trending_videos_clean.csv
